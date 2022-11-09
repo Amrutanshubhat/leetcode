@@ -61,3 +61,26 @@ class Solution:
                 max_profit = local_max
         
         return max_profit
+
+#Solution 2: Peak Valley approach - O(n) 
+
+class Solution:
+    def maxProfit(self, prices: List[int]) -> int:
+        days = len(prices)
+        if days<2:
+            return 0
+        max_profit = 0
+        sell_high=0
+        buy_low=0
+        i=0
+        while i<days-1:
+            while (i<days-1) and (prices[i]>=prices[i+1]):
+                i+=1
+            buy_low = prices[i]
+            while (i<days-1) and (prices[i]<=prices[i+1]):
+                i+=1
+            sell_high = prices[i]
+            max_profit+= sell_high - buy_low
+        return max_profit
+
+        
