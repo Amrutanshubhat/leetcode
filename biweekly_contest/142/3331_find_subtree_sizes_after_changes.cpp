@@ -1,29 +1,48 @@
 class Solution {
-#define ALPHABET_SIZE 26
+#define ALPHA_SIZE 26
+  vector<stack<int>> alpha;
+  vector<vector<int>> adj;
+  vector<int> out;
+
 public:
   vector<int> findSubtreeSizes(vector<int> &parent, string s) {
     size_t n = parent.size();
-    vector<int> new_parent(n);
-    vector<int> out(n, 1);
-
-    for (int i = n - 1; i >= 0; i--) {
-      int x = parent[i];
-
-      while (x != -1 && s[x] != s[i])
-        x = parent[x];
-
-      if (x != -1)
-        new_parent[i] = x;
-      else
-        new_parent[i] = parent[i];
+    adj.resize(n);
+    for (size_t i = 1; i < n; i++) {
+      adj[parent[i]].push_back(i);
     }
-    for (size_t i = 0; i < n; i++) {
-      int x = new_parent[i];
-      while (x != -1) {
-        out[x]++;
-        x = new_parent[x];
-      }
+    alpha.resize(ALPHA_SIZE);
+    dfs(parent, 0, s);
+    adj.clear();
+    adj.resize(n);
+    for (size_t i = 1; i < n; i++) {
+      adj[parent[i]].push_back(i);
     }
+    out.resize(n, 1);
+    dfs2(0);
     return out;
+  }
+
+private:
+  int dfs2(int i) {
+    for (const auto &x : adj[i]) {
+      out[i] += dfs2(x);
+    }
+    return out[i];
+  }
+  void dfs(vector<int> &parent, int i, string &s) {
+    int index = s[i] - 'a';
+
+    if (!alpha[index].empty()) {
+      parent[i] = alpha[index].top();
+    }
+
+    alpha[index].push(i);
+
+    for (const auto &x : adj[i]) {
+      dfs(parent, x, s);
+    }
+    // node cannot be assined to sibling or lower nodes
+    alpha[index].pop();
   }
 };
