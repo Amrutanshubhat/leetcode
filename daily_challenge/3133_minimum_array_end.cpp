@@ -7,7 +7,7 @@ public:
       if (x & 1) {
         out += 1 << i;
       } else {
-        out += (n & 1) << i;
+        out += (size_t)(n & 1) << i;
         n >>= 1;
       }
     }
